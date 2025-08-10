@@ -18,7 +18,9 @@ ABR_API_URL = "https://abr.business.gov.au/json/AbnDetails.aspx"
 ABR_SEARCH_URL = "https://abr.business.gov.au/json/AbnDetails.aspx"
 
 # Get authentication GUID from environment variable
-ABR_AUTH_GUID = os.getenv('ABR_AUTH_GUID', '60ff3b3e-c2f4-4e9d-a086-78c396e7013d')
+ABR_AUTH_GUID = os.getenv('ABR_AUTH_GUID')
+if not ABR_AUTH_GUID:
+    raise ValueError("ABR_AUTH_GUID environment variable is not set. Please create a .env file with your authentication GUID.")
 
 def search_abr_businesses(search_term, state_filter=None, postcode_filter=None, max_results=100000):
     """
