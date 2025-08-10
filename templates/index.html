@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ABR Business Search</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        max-width: 600px;
+        width: 100%;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .header h1 {
+        color: #333;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        font-weight: 300;
+      }
+
+      .header p {
+        color: #666;
+        font-size: 1.1em;
+      }
+
+      .search-form {
+        margin-bottom: 30px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 500;
+        font-size: 1.1em;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e1e5e9;
+        border-radius: 10px;
+        font-size: 1.1em;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .form-group select {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e1e5e9;
+        border-radius: 10px;
+        font-size: 1.1em;
+        transition: border-color 0.3s ease;
+        background-color: white;
+        cursor: pointer;
+      }
+
+      .filters-section {
+        margin: 25px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border: 1px solid #e1e5e9;
+      }
+
+      .filters-section h3 {
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 1.2em;
+        font-weight: 500;
+      }
+
+      .filters-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .search-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.2em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+
+      .search-btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .search-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .results {
+        display: none;
+        margin-top: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+      }
+
+      .results.show {
+        display: block;
+      }
+
+      .results h3 {
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 1.3em;
+      }
+
+      .results p {
+        color: #666;
+        margin-bottom: 15px;
+        line-height: 1.6;
+      }
+
+      .download-links {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+
+      .download-btn {
+        padding: 10px 20px;
+        background: #28a745;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .download-btn:hover {
+        background: #218838;
+      }
+
+      .download-btn.xml {
+        background: #17a2b8;
+      }
+
+      .download-btn.xml:hover {
+        background: #138496;
+      }
+
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #dc3545;
+        margin-top: 20px;
+        display: none;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #667eea;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 10px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .icon {
+        width: 16px;
+        height: 16px;
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 20px;
+        }
+
+        .header h1 {
+          font-size: 2em;
+        }
+
+        .filters-grid {
+          grid-template-columns: 1fr;
+          gap: 15px;
+        }
+
+        .download-links {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>ABR Business Search</h1>
+        <p>Search Australian Business Register and convert results to CSV</p>
+      </div>
+
+      <form class="search-form" id="searchForm">
+        <div class="form-group">
+          <label for="searchTerm">Business Name to Search:</label>
+          <input
+            type="text"
+            id="searchTerm"
+            name="search_term"
+            placeholder="Enter business name (e.g., 'Midwife', 'Consulting')"
+            required
+          />
+        </div>
+
+        <div class="filters-section">
+          <h3>Optional Filters</h3>
+          <div class="filters-grid">
+            <div class="form-group">
+              <label for="stateFilter">State/Territory:</label>
+              <select id="stateFilter" name="state_filter">
+                <option value="">All States</option>
+                <option value="NSW">New South Wales (NSW)</option>
+                <option value="VIC">Victoria (VIC)</option>
+                <option value="QLD">Queensland (QLD)</option>
+                <option value="WA">Western Australia (WA)</option>
+                <option value="SA">South Australia (SA)</option>
+                <option value="TAS">Tasmania (TAS)</option>
+                <option value="ACT">Australian Capital Territory (ACT)</option>
+                <option value="NT">Northern Territory (NT)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="postcodeFilter">Postcode:</label>
+              <input
+                type="text"
+                id="postcodeFilter"
+                name="postcode_filter"
+                placeholder="e.g., 2232, 2000"
+                maxlength="4"
+              />
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="search-btn" id="searchBtn">
+          <span class="btn-text">Search & Convert</span>
+        </button>
+      </form>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Searching and converting data...</p>
+      </div>
+
+      <div class="error" id="error"></div>
+
+      <div class="results" id="results">
+        <h3>Search Results</h3>
+        <p id="resultMessage"></p>
+        <div class="download-links" id="downloadLinks">
+          <!-- Download links will be inserted here -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("searchForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const searchTerm = document.getElementById("searchTerm").value.trim();
+          const searchBtn = document.getElementById("searchBtn");
+          const btnText = searchBtn.querySelector(".btn-text");
+          const loading = document.getElementById("loading");
+          const results = document.getElementById("results");
+          const error = document.getElementById("error");
+
+          if (!searchTerm) {
+            showError("Please enter a search term");
+            return;
+          }
+
+          // Show loading state
+          searchBtn.disabled = true;
+          btnText.textContent = "Searching...";
+          loading.style.display = "block";
+          results.classList.remove("show");
+          error.style.display = "none";
+
+          try {
+            const formData = new FormData();
+            formData.append("search_term", searchTerm);
+
+            // Add filter values
+            const stateFilter = document.getElementById("stateFilter").value;
+            const postcodeFilter =
+              document.getElementById("postcodeFilter").value;
+
+            if (stateFilter) {
+              formData.append("state_filter", stateFilter);
+            }
+            if (postcodeFilter) {
+              formData.append("postcode_filter", postcodeFilter);
+            }
+
+            const response = await fetch("/search", {
+              method: "POST",
+              body: formData,
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showResults(data);
+            } else {
+              showError(data.error || "An error occurred during the search");
+            }
+          } catch (err) {
+            showError("Network error. Please try again.");
+            console.error("Error:", err);
+          } finally {
+            // Reset button state
+            searchBtn.disabled = false;
+            btnText.textContent = "Search & Convert";
+            loading.style.display = "none";
+          }
+        });
+
+      function showResults(data) {
+        const results = document.getElementById("results");
+        const resultMessage = document.getElementById("resultMessage");
+        const downloadLinks = document.getElementById("downloadLinks");
+
+        resultMessage.textContent = data.message;
+
+        downloadLinks.innerHTML = `
+                <a href="/download/${data.xml_file}" class="download-btn xml">
+                    <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                    </svg>
+                    Download XML
+                </a>
+                <a href="/download/${data.csv_file}" class="download-btn">
+                    <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                    </svg>
+                    Download CSV
+                </a>
+            `;
+
+        results.classList.add("show");
+      }
+
+      function showError(message) {
+        const error = document.getElementById("error");
+        error.textContent = message;
+        error.style.display = "block";
+      }
+    </script>
+  </body>
+</html>
