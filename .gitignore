@@ -53,3 +53,4 @@ instance/
 
 # Downloads directory (contains generated files)
 downloads/
+Experiment/
